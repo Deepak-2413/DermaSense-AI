@@ -81,7 +81,7 @@ Centralized healthcare dashboard providing access to AI diagnosis, Gemini Assist
 
 Upload a skin image to receive AI-powered diagnosis, confidence score, disease overview, personalized healthcare guidance, and downloadable PDF reports.
 
-![AI Detection](assets/screenshots/prediction.png)
+![AI Detection](assets/screenshots/.png)
 
 ---
 
