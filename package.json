@@ -1,0 +1,24 @@
+{
+  "name": "dermasense-ai-fullstack",
+  "version": "1.0.0",
+  "description": "Full-Stack AI Skin Disease Detection & Healthcare Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  },
+  "keywords": [
+    "full-stack",
+    "express",
+    "vertex-ai",
+    "gemini-api",
+    "firestore",
+    "dermasense-ai"
+  ],
+  "author": "DermaSense AI Team",
+  "license": "MIT"
+}

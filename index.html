@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DermaSense AI | Enterprise Medical AI Platform</title>
+    <meta name="description" content="DermaSense AI is an intelligent Google Cloud-powered healthcare platform for early skin disease detection, personalized medical guidance, Gemini AI assistant, and nearby hospital locator.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome & Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="enterprise-theme">
+    <!-- Main Application Workspace -->
+    <div class="app-container" id="appRoot">
+    <!-- Top Utility Header Bar -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand-logo" onclick="switchTab('hero-tab')">
+                <div class="logo-icon-wrap">
+                    <i class="fa-solid fa-shield-halved logo-icon"></i>
+                    <span class="pulse-dot"></span>
+                </div>
+                <div class="logo-text">
+                    <span class="brand-title">DermaSense <span class="accent-text">AI</span></span>
+                    <span class="brand-sub">Enterprise Healthcare Platform • Google Cloud</span>
+                </div>
+            </div>
+
+            <div class="header-center-search">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" placeholder="Search skin conditions, medical terms, or doctors..." oninput="handleGlobalSearch(this.value)">
+            </div>
+
+            <!-- Action Controls -->
+            <div class="header-actions">
+                <!-- Cloud Translation API Switcher -->
+                <div class="language-selector">
+                    <i class="fa-solid fa-globe lang-icon"></i>
+                    <select id="languageSelect" onchange="changeLanguage(this.value)">
+                        <option value="en">English (US)</option>
+                        <option value="es">Español</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="ta">தமிழ் (Tamil)</option>
+                    </select>
+                </div>
+
+                <!-- User Session Badge -->
+                <div class="user-badge" id="userProfileBadge" onclick="openAuthModal()">
+                    <div class="user-avatar" id="headerUserAvatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="user-info">
+                        <span class="user-name" id="currentUserName">Demo Patient</span>
+                        <span class="user-status" id="currentUserRole"><i class="fa-solid fa-circle-check"></i> Firebase Auth</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Full-Stack Application Layout -->
+    <div class="app-body-layout">
+        <!-- Left Vertical Navigation & Workflow Sidebar -->
+        <aside class="app-sidebar">
+            <!-- Main Navigation Menu -->
+            <div class="sidebar-section-title">Navigation</div>
+            <nav class="sidebar-nav">
+                <button class="nav-link active" data-tab="hero-tab" onclick="switchTab('hero-tab')">
+                    <i class="fa-solid fa-house"></i> <span data-i18n="nav_home">Home Dashboard</span>
+                </button>
+                <button class="nav-link" data-tab="detection-tab" onclick="switchTab('detection-tab')">
+                    <i class="fa-solid fa-microscope"></i> <span data-i18n="nav_detect">AI Skin Detection</span>
+                </button>
+                <button class="nav-link" data-tab="assistant-tab" onclick="switchTab('assistant-tab')">
+                    <i class="fa-solid fa-robot"></i> <span data-i18n="nav_gemini">Gemini Assistant</span>
+                </button>
+                <button class="nav-link" data-tab="hospitals-tab" onclick="switchTab('hospitals-tab')">
+                    <i class="fa-solid fa-hospital"></i> <span data-i18n="nav_hospitals">Nearby Hospitals</span>
+                </button>
+                <button class="nav-link" data-tab="history-tab" onclick="switchTab('history-tab')">
+                    <i class="fa-solid fa-file-medical"></i> <span data-i18n="nav_reports">Medical History</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-divider"></div>
+
+            <!-- Workflow Pipeline Stepper -->
+            <div class="sidebar-section-title">
+                <span>System Workflow</span>
+                <span class="gcp-badge"><i class="fa-brands fa-google-cloud"></i> GCP</span>
+            </div>
+            <div class="sidebar-stepper">
+                <div class="step-card step-1 active" onclick="highlightStep(1, 'detection-tab')">
+                    <div class="step-num">1</div>
+                    <div class="step-icon"><i class="fa-solid fa-user-lock"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">User Auth / Register</span>
+                        <span class="step-tech">Firebase Auth</span>
+                    </div>
+                </div>
+
+                <div class="step-card step-2" onclick="highlightStep(2, 'detection-tab')">
+                    <div class="step-num">2</div>
+                    <div class="step-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">Upload Skin Image</span>
+                        <span class="step-tech">Cloud Storage</span>
+                    </div>
+                </div>
+
+                <div class="step-card step-3" onclick="highlightStep(3, 'detection-tab')">
+                    <div class="step-num">3</div>
+                    <div class="step-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">Preprocessing</span>
+                        <span class="step-tech">Cloud Functions</span>
+                    </div>
+                </div>
+
+                <div class="step-card step-4" onclick="highlightStep(4, 'detection-tab')">
+                    <div class="step-num">4</div>
+                    <div class="step-icon"><i class="fa-solid fa-brain"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">AI Model Prediction</span>
+                        <span class="step-tech">Vertex AI</span>
+                    </div>
+                </div>
+
+                <div class="step-card step-5" onclick="highlightStep(5, 'assistant-tab')">
+                    <div class="step-num">5</div>
+                    <div class="step-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">AI Insights & Guidance</span>
+                        <span class="step-tech">Gemini API</span>
+                    </div>
+                </div>
+
+                <div class="step-card step-6" onclick="highlightStep(6, 'hospitals-tab')">
+                    <div class="step-num">6</div>
+                    <div class="step-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">Nearby Hospital</span>
+                        <span class="step-tech">Google Maps API</span>
+                    </div>
+                </div>
+
+                <div class="step-card step-7" onclick="highlightStep(7, 'history-tab')">
+                    <div class="step-num">7</div>
+                    <div class="step-icon"><i class="fa-solid fa-bell"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">Notifications & History</span>
+                        <span class="step-tech">Firestore + FCM</span>
+                    </div>
+                </div>
+
+                <div class="step-card step-8" onclick="switchTab('feedback-tab')">
+                    <div class="step-num">8</div>
+                    <div class="step-icon"><i class="fa-solid fa-comments"></i></div>
+                    <div class="step-info">
+                        <span class="step-title">User Feedback</span>
+                        <span class="step-tech">Firestore</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Main Workspace Content Area -->
+        <main class="main-content-area">
+
+            <!-- TAB 1: HERO HOME DASHBOARD -->
+            <div id="hero-tab" class="tab-content active">
+                <section class="hero-banner-card">
+                    <div class="hero-content">
+                        <span class="hero-pill"><i class="fa-solid fa-shield-virus"></i> Early Skin Healthcare & Diagnostic AI</span>
+                        <h1 class="hero-title" data-i18n="hero_title">AI-Powered Skin Disease Detection & Health Recommendations</h1>
+                        <p class="hero-desc" data-i18n="hero_desc">
+                            DermaSense AI leverages Google Cloud, Vertex AI, and Gemini API to empower patients and doctors with instant image analysis, high-confidence medical predictions, personalized preventive care, and nearby dermatologist matching.
+                        </p>
+                        <div class="hero-cta-group">
+                            <button class="btn btn-primary" onclick="switchTab('detection-tab')">
+                                <i class="fa-solid fa-camera"></i> <span data-i18n="cta_start">Start AI Skin Scan</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="switchTab('assistant-tab')">
+                                <i class="fa-solid fa-comments"></i> <span data-i18n="cta_gemini">Ask Gemini Assistant</span>
+                            </button>
+                            <button class="btn btn-outline" onclick="switchTab('hospitals-tab')">
+                                <i class="fa-solid fa-location-dot"></i> <span data-i18n="cta_hospitals">Find Nearby Clinics</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="visual-wrapper">
+                            <img src="assets/images/skin_dermatoscope_hero.jpg" id="heroVisualImage" alt="Dermatology Skin Examination & Analysis" class="hero-img">
+                        </div>
+                    </div>
+                    <!-- Premium Redesigned Platform Core Features Section -->
+            <section class="features-section premium-saas-section">
+                <div class="section-header-wrap">
+                    <span class="section-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Healthcare Platform</span>
+                    <h2 class="section-title-main">Intelligent Healthcare Services</h2>
+                    <p class="section-subtitle">
+                        Everything you need for fast, reliable, AI-powered skin disease detection, medical guidance, hospital recommendations, and secure report management in one unified workspace.
+                    </p>
+                    <div class="section-accent-line"></div>
+                </div>
+
+                <div class="features-container features-grid-saas">
+                    <!-- Card 1: AI Disease Detection -->
+                    <div class="feature-card feature-card-saas" onclick="switchTab('detection-tab')">
+                        <div class="card-header-row">
+                            <div class="feature-icon-circle bg-emerald">
+                                <i class="fa-solid fa-microscope"></i>
+                            </div>
+                            <span class="card-badge badge-emerald"><i class="fa-solid fa-bolt"></i> AI Powered</span>
+                        </div>
+                        <div class="card-body-content">
+                            <h3>AI Disease Detection</h3>
+                            <p class="card-desc">Neural network model for skin triage and confidence scores.</p>
+                            <ul class="card-highlights">
+                                <li><i class="fa-solid fa-circle-check text-success"></i> Upload skin image</li>
+                                <li><i class="fa-solid fa-circle-check text-success"></i> Instant AI prediction</li>
+                            </ul>
+                        </div>
+                        <div class="card-cta-wrap">
+                            <button class="btn btn-saas btn-emerald">
+                                Start Diagnosis <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Gemini AI Health Assistant -->
+                    <div class="feature-card feature-card-saas" onclick="switchTab('assistant-tab')">
+                        <div class="card-header-row">
+                            <div class="feature-icon-circle bg-blue">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <span class="card-badge badge-blue"><i class="fa-solid fa-sparkles"></i> Smart Assistant</span>
+                        </div>
+                        <div class="card-body-content">
+                            <h3>Gemini Health Assistant</h3>
+                            <p class="card-desc">Conversational AI for plain language diagnostic guidance.</p>
+                            <ul class="card-highlights">
+                                <li><i class="fa-solid fa-circle-check text-success"></i> Powered by Gemini</li>
+                                <li><i class="fa-solid fa-circle-check text-success"></i> Plain AI guidance</li>
+                            </ul>
+                        </div>
+                        <div class="card-cta-wrap">
+                            <button class="btn btn-saas btn-blue">
+                                Ask Assistant <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Nearby Hospitals & Doctors -->
+                    <div class="feature-card feature-card-saas" onclick="switchTab('hospitals-tab')">
+                        <div class="card-header-row">
+                            <div class="feature-icon-circle bg-indigo">
+                                <i class="fa-solid fa-hospital-user"></i>
+                            </div>
+                            <span class="card-badge badge-indigo"><i class="fa-solid fa-location-dot"></i> Location Based</span>
+                        </div>
+                        <div class="card-body-content">
+                            <h3>Nearby Hospitals</h3>
+                            <p class="card-desc">Google Maps locator for top dermatologists & emergency care.</p>
+                            <ul class="card-highlights">
+                                <li><i class="fa-solid fa-circle-check text-success"></i> GPS location active</li>
+                                <li><i class="fa-solid fa-circle-check text-success"></i> Nearby specialists</li>
+                            </ul>
+                        </div>
+                        <div class="card-cta-wrap">
+                            <button class="btn btn-saas btn-indigo">
+                                Find Hospitals <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Medical Reports -->
+                    <div class="feature-card feature-card-saas" onclick="switchTab('history-tab')">
+                        <div class="card-header-row">
+                            <div class="feature-icon-circle bg-purple">
+                                <i class="fa-solid fa-file-shield"></i>
+                            </div>
+                            <span class="card-badge badge-purple"><i class="fa-solid fa-shield-halved"></i> Secure</span>
+                        </div>
+                        <div class="card-body-content">
+                            <h3>Cloud Medical Reports</h3>
+                            <p class="card-desc">Google Cloud Firestore records with clinical PDF export.</p>
+                            <ul class="card-highlights">
+                                <li><i class="fa-solid fa-circle-check text-success"></i> Cloud Firestore</li>
+                                <li><i class="fa-solid fa-circle-check text-success"></i> Official PDF export</li>
+                            </ul>
+                        </div>
+                        <div class="card-cta-wrap">
+                            <button class="btn btn-saas btn-purple">
+                                View Reports <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            </div>
+
+            <!-- TAB 2: AI DISEASE DETECTION MODULE -->
+            <div id="detection-tab" class="tab-content">
+                <div class="module-header">
+                    <h2><i class="fa-solid fa-microscope"></i> AI Skin Disease Detection Engine</h2>
+                    <p>Upload a clear image of the affected skin area or select a preset sample for instant Vertex AI model diagnosis.</p>
+                </div>
+
+                <div class="detection-layout">
+                    <!-- Left: Upload & Camera Controls -->
+                    <div class="upload-panel glass-card">
+                        <h3><i class="fa-solid fa-cloud-arrow-up"></i> Image Upload & Input</h3>
+
+                        <!-- Drag and Drop Zone -->
+                        <div class="drop-zone" id="dropZone" onclick="triggerFileInput()">
+                            <input type="file" id="skinFileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                            <div class="drop-zone-content" id="dropZoneContent">
+                                <i class="fa-solid fa-image drop-icon"></i>
+                                <p class="drop-text">Drag & drop skin image here or <strong>browse files</strong></p>
+                                <span class="drop-sub">Supports JPG, PNG, WEBP (Max 10MB)</span>
+                            </div>
+                            <img id="imagePreview" class="image-preview" style="display: none;" alt="Skin Sample Preview">
+                            <div id="scanLaser" class="scan-laser" style="display: none;"></div>
+                        </div>
+
+                        <!-- Analyze Action Button -->
+                        <button class="btn btn-primary btn-block btn-lg" id="analyzeBtn" onclick="runAIDetection()" disabled>
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Run Medical Analysis
+                        </button>
+                    </div>
+
+                    <!-- Right: AI Results & Diagnostic Guidance -->
+                    <div class="results-panel glass-card">
+                        <!-- Placeholder State -->
+                        <div id="resultsPlaceholder" class="results-empty">
+                            <i class="fa-solid fa-stethoscope empty-icon"></i>
+                            <h3>Awaiting Image Input</h3>
+                            <p>Upload a skin condition image or choose a demo preset on the left to view the Vertex AI diagnosis, confidence metrics, precautions, and Gemini guidance.</p>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="resultsLoading" class="results-loading" style="display: none;">
+                            <div class="spinner"></div>
+                            <h4 id="scanStepText">Uploading to Google Cloud Storage...</h4>
+                            <p class="loading-sub">Running Vertex AI Convolutional Neural Network & Preprocessing pipeline...</p>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" id="scanProgressFill"></div>
+                            </div>
+                        </div>
+
+                        <!-- Results Output State -->
+                        <div id="resultsContent" class="results-content" style="display: none;">
+                            <div class="result-header-badge">
+                                <span class="severity-tag" id="resSeverityTag">MODERATE RISK</span>
+                                <span class="gcp-verified"><i class="fa-brands fa-google-cloud"></i> Verified by Vertex AI</span>
+                            </div>
+
+                            <h2 class="disease-name" id="resDiseaseName">Atopic Dermatitis (Eczema)</h2>
+                            <div class="confidence-wrap">
+                                <div class="confidence-info">
+                                    <span>Diagnostic Confidence</span>
+                                    <strong id="resConfidenceVal">94.6%</strong>
+                                </div>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" id="resConfidenceFill" style="width: 94.6%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Medical Overview -->
+                            <div class="result-section">
+                                <h4><i class="fa-solid fa-notes-medical"></i> Condition Overview</h4>
+                                <p id="resOverview">Atopic dermatitis is a chronic inflammatory skin condition causing itchy, red, swollen, and cracked skin. Common in flexural areas like elbows and knees.</p>
+                            </div>
+
+                            <!-- Recommendations & Precautions -->
+                            <div class="result-section">
+                                <h4><i class="fa-solid fa-user-doctor"></i> Personalized Healthcare Guidance</h4>
+                                <ul class="guidance-list" id="resGuidanceList">
+                                    <li><i class="fa-solid fa-check-circle text-success"></i> Apply fragrance-free moisturizing creams twice daily after bathing.</li>
+                                    <li><i class="fa-solid fa-triangle-exclamation text-warning"></i> Avoid harsh synthetic soaps, hot water showers, and scratchy fabrics.</li>
+                                    <li><i class="fa-solid fa-shield-virus text-info"></i> Use topical hydrocortisone ointment as advised by a qualified specialist.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Do's & Don'ts Grid -->
+                            <div class="dos-donts-grid">
+                                <div class="dos-box">
+                                    <h5><i class="fa-solid fa-thumbs-up text-success"></i> Recommended Do's</h5>
+                                    <ul id="resDosList">
+                                        <li>Keep skin hydrated with ointment</li>
+                                        <li>Use mild, gentle cleansers</li>
+                                    </ul>
+                                </div>
+                                <div class="donts-box">
+                                    <h5><i class="fa-solid fa-thumbs-down text-danger"></i> Avoid Don'ts</h5>
+                                    <ul id="resDontsList">
+                                        <li>Do not scratch inflamed patches</li>
+                                        <li>Avoid direct sunlight exposure</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Action Bar for Next Steps -->
+                            <div class="result-actions">
+                                <button class="btn btn-secondary" onclick="askGeminiAboutDiagnosis()">
+                                    <i class="fa-solid fa-robot"></i> Ask Gemini Assistant About This
+                                </button>
+                                <button class="btn btn-outline" onclick="switchTab('hospitals-tab')">
+                                    <i class="fa-solid fa-location-dot"></i> Find Nearby Specialists
+                                </button>
+                                <button class="btn btn-primary" onclick="exportPDFReport()">
+                                    <i class="fa-solid fa-file-pdf"></i> Download PDF Clinical Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: GEMINI AI HEALTH ASSISTANT -->
+            <div id="assistant-tab" class="tab-content">
+                <div class="module-header">
+                    <h2><i class="fa-solid fa-robot"></i> Gemini AI Health Assistant</h2>
+                    <p>Interactive medical AI trained to answer your skin health questions, clarify diagnostic results, and provide preventive care advice in clear language.</p>
+                </div>
+
+                <div class="chat-container glass-card">
+                    <!-- Chat Log Display -->
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message assistant">
+                            <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                            <div class="message-body">
+                                <div class="sender-name">Gemini AI Assistant</div>
+                                <p>Hello! I am your Google Gemini Health Assistant. I can help explain skin conditions, interpret your AI detection results, and give personalized preventive advice. How can I assist you today?</p>
+                                <div class="timestamp">Just now</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prompt Preset Chips -->
+                    <div class="chat-prompt-chips">
+                        <span class="chips-label"><i class="fa-solid fa-bolt"></i> Quick Questions:</span>
+                        <button class="chip-btn" onclick="sendQuickPrompt('Explain my latest skin diagnosis in simple terms.')">Explain my diagnosis</button>
+                        <button class="chip-btn" onclick="sendQuickPrompt('What are the early warning signs of skin cancer?')">Melanoma warning signs</button>
+                        <button class="chip-btn" onclick="sendQuickPrompt('How can I relieve itching from severe eczema at home?')">Eczema home remedies</button>
+                        <button class="chip-btn" onclick="sendQuickPrompt('When should I immediately consult an emergency dermatologist?')">When to see a doctor?</button>
+                    </div>
+
+                    <!-- Chat Input Controls -->
+                    <div class="chat-input-bar">
+                        <input type="text" id="chatInput" placeholder="Ask Gemini AI any question about skin diseases, treatments, or symptoms..." onkeydown="handleChatKeyDown(event)">
+                        <button class="btn btn-primary" onclick="sendMessage()">
+                            <i class="fa-solid fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: NEARBY HOSPITALS MODULE -->
+            <div id="hospitals-tab" class="tab-content">
+                <div class="module-header-flex">
+                    <div>
+                        <h2><i class="fa-solid fa-hospital-user text-primary"></i> Nearby Dermatologists & Hospitals</h2>
+                        <p>Google Maps Platform integration suggesting verified skin clinics, dermatologists, and healthcare centers.</p>
+                    </div>
+                    <div class="header-action-group" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <select id="citySelect" class="form-input" style="padding: 10px 14px; font-weight: 700; border-radius: 10px; border: 1.5px solid #cbd5e1; background: #ffffff;" onchange="changeCityLocation(this.value)">
+                            <option value="bengaluru">📍 Bengaluru (Silicon Valley)</option>
+                            <option value="mumbai">📍 Mumbai (Financial Hub)</option>
+                            <option value="delhi">📍 New Delhi (Capital)</option>
+                            <option value="hyderabad">📍 Hyderabad (Cyberabad)</option>
+                            <option value="chennai">📍 Chennai (Healthcare Capital)</option>
+                        </select>
+                        <button class="btn btn-primary btn-lg" onclick="locateUserGPS()">
+                            <i class="fa-solid fa-location-crosshairs"></i> Detect My Location
+                        </button>
+                    </div>
+                </div>
+
+                <div class="hospitals-layout">
+                    <!-- Left: Interactive Leaflet / Google Map View -->
+                    <div class="map-container glass-card">
+                        <!-- Leaflet Map Div (Explicit Height Set in CSS) -->
+                        <div id="map" class="map-view"></div>
+                    </div>
+
+                    <!-- Right: Hospital Directory List -->
+                    <div class="hospital-list-panel glass-card">
+                        <div class="list-header">
+                            <h3><i class="fa-solid fa-list-check"></i> Recommended Clinics</h3>
+                            <span class="count-badge" id="hospitalCount">4 Centers Found</span>
+                        </div>
+
+                        <div class="filter-chips">
+                            <button class="filter-btn active" onclick="filterHospitals('all')">All</button>
+                            <button class="filter-btn" onclick="filterHospitals('dermatology')">Dermatology</button>
+                            <button class="filter-btn" onclick="filterHospitals('emergency')">24/7 Emergency</button>
+                            <button class="filter-btn" onclick="filterHospitals('toprated')">Top Rated (4.5+)</button>
+                        </div>
+
+                        <div class="hospital-cards-wrap" id="hospitalCardsWrap">
+                            <!-- Injected via app.js -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: MEDICAL HISTORY MODULE -->
+            <div id="history-tab" class="tab-content">
+                <div class="module-header">
+                    <h2><i class="fa-solid fa-file-waveform text-primary"></i> Patient Medical History & Reports</h2>
+                    <p>Encrypted clinical diagnostic logs saved in Google Cloud Firestore with exportable PDF summaries.</p>
+                </div>
+
+                <div class="history-container glass-card">
+                    <div class="history-toolbar">
+                        <div class="search-wrap">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="historySearch" onkeyup="filterHistoryLogs()" placeholder="Search diagnosis or report ID...">
+                        </div>
+                        <div class="history-actions">
+                            <button class="btn btn-primary btn-sm" onclick="exportPDFReport()">
+                                <i class="fa-solid fa-file-pdf"></i> Export Latest PDF
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="exportAllHistoryJSON()">
+                                <i class="fa-solid fa-download"></i> Export JSON
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Report ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Predicted Condition</th>
+                                    <th>Confidence Score</th>
+                                    <th>Risk Level</th>
+                                    <th>Cloud Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: USER FEEDBACK WORKSPACE TAB -->
+            <div id="feedback-tab" class="tab-content">
+                <div class="module-header" style="margin-bottom: 36px;">
+                    <h2><i class="fa-solid fa-comments text-primary"></i> Patient & Doctor Feedback System</h2>
+                    <p>Log feedback into Google Cloud Firestore to improve model diagnostic accuracy and platform UX.</p>
+                </div>
+
+                <div class="feedback-layout">
+                    <!-- Interactive Feedback Form -->
+                    <div class="glass-card feedback-form-panel">
+                        <h3><i class="fa-solid fa-pen-to-square text-primary"></i> Submit Platform Feedback</h3>
+                        <form onsubmit="submitUserFeedback(event)">
+                            <!-- Dynamic User Information Inputs -->
+                            <div class="form-row-2col">
+                                <div class="form-group">
+                                    <label><i class="fa-solid fa-user text-primary"></i> Full Name:</label>
+                                    <input type="text" id="feedbackUserName" class="form-input" placeholder="e.g. Dr. Alex Morgan / Patient Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label><i class="fa-solid fa-envelope text-primary"></i> Email Address:</label>
+                                    <input type="email" id="feedbackUserEmail" class="form-input" placeholder="e.g. alex.morgan@example.com" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fa-solid fa-bullseye text-info"></i> AI Detection Accuracy Rating:</label>
+                                <select id="feedbackAccuracy" class="form-input">
+                                    <option value="Highly Accurate & Clear">Highly Accurate & Clear (95%+)</option>
+                                    <option value="Moderately Accurate">Moderately Accurate (80-95%)</option>
+                                    <option value="Needs Improvement">Needs Improvement (&lt;80%)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fa-solid fa-message text-secondary"></i> Comments / Feature Suggestions:</label>
+                                <textarea id="feedbackComment" class="form-input" rows="4" placeholder="Share your experience or clinical suggestions to help us improve DermaSense AI..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block btn-lg">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Submit Feedback to Firestore
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div> <!-- end app-body-layout -->
+
+    <!-- Appointment Booking Modal -->
+    <div id="bookingModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card glass-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-calendar-check"></i> Schedule Appointment</h3>
+                <button class="close-btn" onclick="closeBookingModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm" onsubmit="submitAppointment(event)">
+                    <div class="form-group">
+                        <label>Hospital / Doctor:</label>
+                        <input type="text" id="bookHospitalName" readonly class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Patient Full Name:</label>
+                        <input type="text" id="bookPatientName" required class="form-input" value="Demo Patient">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Preferred Date:</label>
+                            <input type="date" id="bookDate" required class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Time Slot:</label>
+                            <select id="bookTime" class="form-input">
+                                <option>10:00 AM - 11:00 AM</option>
+                                <option>02:00 PM - 03:00 PM</option>
+                                <option>05:00 PM - 06:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Consultation Note / Reason:</label>
+                        <textarea id="bookNotes" rows="3" class="form-input" placeholder="Mention diagnosis report or skin symptoms..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Confirm Appointment Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Feedback Modal -->
+    <div id="feedbackModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card glass-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-comments"></i> DermaSense User Feedback System</h3>
+                <button class="close-btn" onclick="closeFeedbackModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="submitUserFeedback(event)">
+                    <div class="form-group">
+                        <label>Overall Experience Rating:</label>
+                        <div class="star-rating">
+                            <i class="fa-solid fa-star star-icon active" data-rating="1" onclick="setStarRating(1)"></i>
+                            <i class="fa-solid fa-star star-icon active" data-rating="2" onclick="setStarRating(2)"></i>
+                            <i class="fa-solid fa-star star-icon active" data-rating="3" onclick="setStarRating(3)"></i>
+                            <i class="fa-solid fa-star star-icon active" data-rating="4" onclick="setStarRating(4)"></i>
+                            <i class="fa-solid fa-star star-icon active" data-rating="5" onclick="setStarRating(5)"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>AI Detection Accuracy Rating:</label>
+                        <select id="feedbackAccuracy" class="form-input">
+                            <option>Highly Accurate & Clear</option>
+                            <option>Moderately Accurate</option>
+                            <option>Needs Minor Refinement</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Comments / Feature Suggestions:</label>
+                        <textarea id="feedbackComment" rows="3" class="form-input" placeholder="Share your experience to help us improve DermaSense AI..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit Feedback to Cloud</button>
+                </form>
+            </div>
+        </div>
+    </div><!-- End appRoot -->
+
+    <!-- Full Desktop 2-Column Authentication Page -->
+    <div id="authModal" class="auth-full-screen-overlay" style="display: none;">
+        <div class="auth-desktop-grid">
+            <!-- Left 50%: High-Tech Medical AI Showcase Banner -->
+            <div class="auth-left-banner">
+                <div class="banner-content">
+                    <div class="brand-logo light">
+                        <div class="logo-icon-wrap">
+                            <i class="fa-solid fa-shield-halved logo-icon"></i>
+                        </div>
+                        <div class="logo-text">
+                            <span class="brand-title">DermaSense <span class="accent-text">AI</span></span>
+                            <span class="brand-sub">Google Cloud Healthcare Platform</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-text-wrap">
+                        <span class="pill-badge"><i class="fa-brands fa-google-cloud"></i> Google Cloud Architecture</span>
+                        <h2>AI-Driven Skin Disease Detection & Medical Assistant</h2>
+                        <p>Leveraging Vertex AI deep learning models, Gemini 1.5 Pro medical Q&A, and Firestore encrypted record storage for early skin health triage.</p>
+                    </div>
+
+                    <div class="feature-bullets">
+                        <div class="bullet-item">
+                            <div class="bullet-icon"><i class="fa-solid fa-microscope"></i></div>
+                            <div>
+                                <strong>Vertex AI Model Classification</strong>
+                                <p>Identifies 12+ skin conditions with confidence scoring</p>
+                            </div>
+                        </div>
+                        <div class="bullet-item">
+                            <div class="bullet-icon"><i class="fa-solid fa-brain"></i></div>
+                            <div>
+                                <strong>Gemini Health Assistant</strong>
+                                <p>Explains complex diagnoses in simple, reassuring language</p>
+                            </div>
+                        </div>
+                        <div class="bullet-item">
+                            <div class="bullet-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                            <div>
+                                <strong>Nearby Clinic Locator</strong>
+                                <p>Location-aware mapping for top dermatologists & emergency care</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="banner-footer-stats">
+                        <div><strong>98.4%</strong> <span>Model Precision</span></div>
+                        <div><strong>&lt; 2s</strong> <span>Analysis Time</span></div>
+                        <div><strong>AES-256</strong> <span>GCP Firestore</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 50%: Clean Interactive Login / Register Form -->
+            <div class="auth-right-panel">
+                <div class="auth-form-card">
+                    <div class="auth-form-header">
+                        <h2>Welcome to DermaSense AI</h2>
+                        <p>Sign in to access your AI skin scan diagnostic workspace</p>
+                    </div>
+
+                    <!-- Auth Mode Tabs -->
+                    <div class="auth-tabs">
+                        <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">
+                            <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                        </button>
+                        <button class="auth-tab-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">
+                            <i class="fa-solid fa-user-plus"></i> Create Account
+                        </button>
+                    </div>
+
+                    <!-- Auth Form -->
+                    <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                        <div class="form-group" id="fullNameGroup" style="display: none;">
+                            <label><i class="fa-solid fa-id-card"></i> Full Name</label>
+                            <input type="text" id="authFullName" class="form-input" placeholder="e.g. Alex Morgan">
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" id="authEmail" required class="form-input" placeholder="Enter your email address">
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-lock"></i> Password</label>
+                            <input type="password" id="authPassword" required class="form-input" placeholder="Enter your password">
+                        </div>
+
+                        <div class="auth-options">
+                            <label class="remember-label">
+                                <input type="checkbox" checked> Remember me
+                            </label>
+                            <a href="#" onclick="alert('Password reset link sent to your email!')" class="forgot-link">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block btn-lg" id="authSubmitBtn">
+                            <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="footer-title">DermaSense AI</span>
+                <p>Google Cloud Hackathon Project - AI Based Intelligent System For Skin Disease Detection And Health Care Recommendation</p>
+            </div>
+            <div class="footer-tags">
+                <span class="tag"><i class="fa-brands fa-google-cloud"></i> Google Cloud</span>
+                <span class="tag"><i class="fa-solid fa-brain"></i> Vertex AI</span>
+                <span class="tag"><i class="fa-solid fa-robot"></i> Gemini API</span>
+                <span class="tag"><i class="fa-solid fa-map"></i> Google Maps Platform</span>
+                <span class="tag"><i class="fa-solid fa-fire"></i> Firebase Auth & Firestore</span>
+                <span class="tag"><i class="fa-solid fa-language"></i> Cloud Translation API</span>
+            </div>
+            <div class="footer-copy">
+                &copy; 2026 DermaSense AI. Medical Disclaimer: For hackathon demonstration and early triage assistance only. Always consult a certified dermatologist for clinical diagnosis.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS & App Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="app.js"></script>
+</body>
+</html>

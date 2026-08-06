@@ -1,0 +1,55 @@
+{
+  "users": [
+    {
+      "uid": "PAT-9082",
+      "name": "Demo Patient",
+      "email": "patient@dermasense.ai",
+      "role": "Patient"
+    },
+    {
+      "uid": "DOC-4410",
+      "name": "Dr. Sarah Jenkins",
+      "email": "dr.sarah@dermasense.ai",
+      "role": "Dermatologist"
+    }
+  ],
+  "diagnosisLogs": [
+    {
+      "id": "REP-9021",
+      "userId": "PAT-9082",
+      "date": "2026-07-24 10:30 AM",
+      "condition": "Malignant Melanoma (Early Stage)",
+      "confidence": "96.8%",
+      "risk": "HIGH RISK",
+      "status": "Stored in GCP Firestore"
+    },
+    {
+      "id": "REP-8412",
+      "userId": "PAT-9082",
+      "date": "2026-07-18 04:15 PM",
+      "condition": "Atopic Dermatitis (Eczema)",
+      "confidence": "94.6%",
+      "risk": "MODERATE RISK",
+      "status": "Stored in GCP Firestore"
+    },
+    {
+      "id": "REP-7201",
+      "userId": "PAT-9082",
+      "date": "2026-06-05 11:20 AM",
+      "condition": "Acne Vulgaris",
+      "confidence": "98.2%",
+      "risk": "LOW RISK",
+      "status": "Stored in GCP Firestore"
+    }
+  ],
+  "feedbackLogs": [
+    {
+      "id": "FB-101",
+      "rating": 5,
+      "accuracy": "Highly Accurate & Clear",
+      "comment": "Impressive detection speed and clear guidance!",
+      "date": "2026-07-24"
+    }
+  ],
+  "appointments": []
+}
